@@ -4,6 +4,8 @@ import colorama
 from colorama import Fore, Back, Style
 import pathlib
 
+AVAILABLE_LANGUAGES = ["en", "it", "de"]
+
 # Colorama initialization for Windows.
 # Other platforms doesn't need initialization and init will have no effect
 colorama.init()
@@ -86,8 +88,21 @@ def main():
     # Parse user arguments
     args = cli_parser.parse_args()
 
-    # Argument validity checks
-    print(args)
+    # Arguments validity checks
+    file_name = args.filename
+    file_path = pathlib.Path(file_name)
+
+    language = args.language
+
+    if not file_path.exists():
+        raise FileNotFoundError(Fore.RED+f'File: {file_name} not found in path: {file_path.parent}'+Style.RESET_ALL)
+
+    if language not in AVAILABLE_LANGUAGES:
+        raise NotImplementedError(Fore.RED+f'Language "{language}" is not a valid language, please use one of the '
+                                           f'languages available: {AVAILABLE_LANGUAGES}'+Style.RESET_ALL)
+
+    # Start translation daemon
+    start_trans(file_path, language)
 
 
 if __name__ == '__main__':
