@@ -4,7 +4,13 @@ import colorama
 from colorama import Fore, Back, Style
 import pathlib
 
+import log
+from gtd import start_trans
+
 AVAILABLE_LANGUAGES = ["en", "it", "de"]
+
+# Logger set up
+logger = log.setup_custom_logger('root')
 
 # Colorama initialization for Windows.
 # Other platforms doesn't need initialization and init will have no effect
@@ -95,13 +101,13 @@ def main():
     language = args.language
 
     if not file_path.exists():
-        raise FileNotFoundError(Fore.RED+f'File: {file_name} not found in path: {file_path.parent}'+Style.RESET_ALL)
+        raise FileNotFoundError(Fore.RED + f'File: {file_name} not found in path: {file_path.parent}' + Style.RESET_ALL)
 
     if language not in AVAILABLE_LANGUAGES:
-        raise NotImplementedError(Fore.RED+f'Language "{language}" is not a valid language, please use one of the '
-                                           f'languages available: {AVAILABLE_LANGUAGES}'+Style.RESET_ALL)
+        raise NotImplementedError(Fore.RED + f'Language "{language}" is not a valid language, please use one of the '
+                                             f'languages available: {AVAILABLE_LANGUAGES}' + Style.RESET_ALL)
 
-    # Start translation daemon
+    # Start the translation daemon
     start_trans(file_path, language)
 
 
