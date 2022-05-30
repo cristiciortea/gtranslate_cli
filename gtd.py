@@ -1,6 +1,5 @@
 #! ../.venv/bin/python
 import os
-import sys
 import psutil
 from dotenv import load_dotenv
 import log
@@ -9,20 +8,21 @@ import Pyro5.api
 from queue import Queue
 import subprocess
 import multiprocessing
-import threading
+from concurrent.futures import ProcessPoolExecutor
+import six
+from google.cloud import translate_v2 as translate
 
 # Logger setup
 LOGGER = log.setup_custom_logger('gtd')
 
 # Daemon main and secondary loops variables
-DAEMON_RUN_LOOP = True
+DAEMON_RUN_LOOP = multiprocessing.Value('i', 1)
 pyro_server_process = multiprocessing.Process()
-worker_process = multiprocessing.Process()
 
 # Getting environment variables
 QUERIES_PER_SEC = os.environ.get('QUERIES_PER_SEC')
+load_dotenv()
 if not QUERIES_PER_SEC:
-    load_dotenv()
     QUERIES_PER_SEC = int(os.getenv('QUERIES_PER_SEC'))
 
 DAEMON_TIMEOUT_MINUTES = int(os.getenv('DAEMON_TIMEOUT_MINUTES'))
@@ -41,6 +41,7 @@ def stop_processes(parent_pid) -> None:
     parent.kill()
 
 
+@Pyro5.api.expose
 class TranslateQueue(Queue):
     """
     This is the exposed queue class which will be used to store the translation lines and can be accessed by external
@@ -56,10 +57,12 @@ class GTransAPI:
     """ This object is used to handle the api calls for the worker """
 
     def __init__(self):
+        self.translate_client = translate.Client()
         self.calls_per_second = 0
         self.timer = Timer()
 
-    def call(self, phrase):
+    def call_trans(self, phrase):
+        """ Method used to translate the given phrase within the api load restrictions """
         if not self.timer.is_started:
             self.timer.start()
 
@@ -67,11 +70,25 @@ class GTransAPI:
         if self.calls_per_second == QUERIES_PER_SEC and elapsed_time < 1:
             time.sleep(1 - elapsed_time)
             self.timer.restart()
-            # api call for phrase translation
             self.calls_per_second = 1
+            return self.translate_text(phrase)
         else:
             self.calls_per_second += 1
-            # api call for phrase translation
+            return self.translate_text(phrase)
+
+    def translate_text(self, text):
+        """Translates text into the target language.
+        Target must be an ISO 639-1 language code.
+        See https://g.co/cloud/translate/v2/translate-reference#supported_languages
+        """
+
+        if isinstance(text, six.binary_type):
+            text = text.decode("utf-8")
+
+        # Text can also be a sequence of strings, in which case this method
+        # will return a sequence of results for each text.
+        result = self.translate_client.translate(text, target_language="en")
+        return result["translatedText"]
 
 
 class TimerError(Exception):
@@ -116,19 +133,21 @@ class TranslateWorker:
     def __init__(self, translate_queue: TranslateQueue, translator: GTransAPI):
         self.tqueue = translate_queue
         self.translator = translator
-        self.current_threads = []
+        self.to_translate = []
         self.timer = Timer()
 
     def run(self):
         self.timer.start()
         while True:
-            time.sleep(2)
+            time.sleep(10)
             print(f'Looping though the worker, tqueue empty = {self.tqueue.empty()}')
             while not self.tqueue.empty():
-                self.start_trans_threads()
+                phrase = self.tqueue.get()
+                self.to_translate.append(phrase)
+                self.tqueue.task_done()
 
-            if self.current_threads:
-                self.join_trans_threads()
+            if self.to_translate:
+                self.start_trans_subprocs()
 
             # If worker is idle for more than DAEMON_TIMEOUT_MINUTES, the daemon will be closed
             if self.timer.elapsed_minutes_now() > DAEMON_TIMEOUT_MINUTES:
@@ -136,50 +155,38 @@ class TranslateWorker:
                 stop_daemon()
                 break
 
-    def start_trans_threads(self):
-        # start thread for each queue
-        phrase = self.tqueue.get()
-        t = threading.Thread()
-        self.tqueue.task_done()
-
-        # append thread to current threads
-        self.current_threads.append(t)
-
-    def join_trans_threads(self):
-        for thread in self.current_threads:
-            thread.join()
-            result = 0
-            self.tqueue.translated_lines.put(result)
-        # reset current threads
-        self.current_threads = []
-        # reset timer
+    def start_trans_subprocs(self):
+        # start a subprocess for each queue
+        with ProcessPoolExecutor() as executor:
+            results = executor.map(self.translator.call_trans, self.to_translate)
+            for result in results:
+                self.tqueue.translated_lines.put(result)
         self.timer.restart()
-
-    def threads_count(self):
-        return len(self.current_threads)
 
 
 def stop_daemon():
     """ This function is made to clean up when the daemon should stop """
     stop_processes(pyro_server_process.pid)
     LOGGER.info('Translation Daemon will stop...')
-    global DAEMON_RUN_LOOP
-    DAEMON_RUN_LOOP = False
-    os._exit(1)
+    DAEMON_RUN_LOOP.value = 0
 
 
 def daemon_loop_condition():
-    print('called by main loop...')
-    return DAEMON_RUN_LOOP
+    """
+    This function is used to control the daemon main loop.
+    returns: 1 if the daemon main loop should run
+    returns: 0 if the daemon main loop should stop
+    """
+    return DAEMON_RUN_LOOP.value
 
 
 def main():
-    # Run pyro server
+    # Run pyro server in separate process
     global pyro_server_process
     pyro_server_process = multiprocessing.Process(target=start_pyro_server, daemon=True)
     pyro_server_process.start()
 
-    # Creating pyro daemon and register/expose the queue
+    # Creating pyro daemon and register/expose the translation queue
     daemon = Pyro5.server.Daemon()
     ns = Pyro5.api.locate_ns()
 
@@ -187,16 +194,15 @@ def main():
     uri = daemon.register(trans_queue)
     ns.register("translate.queue", uri)
 
-    # Create GTransAPI Translator
+    # Creating GTransAPI Translator
     translator = GTransAPI()
 
-    # Start worker
-    global worker_process
+    # Start translation worker in a separate process
     worker = TranslateWorker(trans_queue, translator)
     worker_process = multiprocessing.Process(target=worker.run, daemon=True)
     worker_process.start()
 
-    # Run pyro daemon
+    # Run pyro daemon in the main thread
     print(f'Translation daemon started, throttling at {QUERIES_PER_SEC} queries/second.')
     daemon.requestLoop(daemon_loop_condition)
 
