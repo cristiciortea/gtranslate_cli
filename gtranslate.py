@@ -1,11 +1,12 @@
+#! ../.venv/bin/python
 import argparse
 import sys
 import colorama
-from colorama import Fore, Back, Style
+from colorama import Fore, Style
 import pathlib
+import Pyro5.api
 
 import log
-from gtd import start_trans
 
 AVAILABLE_LANGUAGES = ["en", "it", "de"]
 
@@ -107,8 +108,10 @@ def main():
         raise NotImplementedError(Fore.RED + f'Language "{language}" is not a valid language, please use one of the '
                                              f'languages available: {AVAILABLE_LANGUAGES}' + Style.RESET_ALL)
 
-    # Start the translation daemon
-    start_trans(file_path, language)
+    # Interact with the python daemon
+    # try the connection maybe the daemon is not started
+    translate_queue = Pyro5.api.Proxy("PYRONAME:translate.queue")
+    print(translate_queue.get_translated_items())
 
 
 if __name__ == '__main__':
