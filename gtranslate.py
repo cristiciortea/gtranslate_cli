@@ -1,6 +1,9 @@
 #! ../.venv/bin/python
 import argparse
+import subprocess
 import sys
+import time
+
 import colorama
 from colorama import Fore, Style
 import pathlib
@@ -11,7 +14,7 @@ import log
 AVAILABLE_LANGUAGES = ["en", "it", "de"]
 
 # Logger set up
-logger = log.setup_custom_logger('root')
+LOGGER = log.setup_custom_logger('root')
 
 # Colorama initialization for Windows.
 # Other platforms doesn't need initialization and init will have no effect
@@ -109,9 +112,31 @@ def main():
                                              f'languages available: {AVAILABLE_LANGUAGES}' + Style.RESET_ALL)
 
     # Interact with the python daemon
-    # try the connection maybe the daemon is not started
     translate_queue = Pyro5.api.Proxy("PYRONAME:translate.queue")
-    print(translate_queue.get_translated_items())
+
+    # Check daemon is not started
+    try:
+        translate_queue.get_translated_lines()
+    except Pyro5.errors.NamingError as e:
+        LOGGER.error('Pyro5.errors.NamingError: Daemon is not running... Please start the daemon.')
+        sys.exit(0)
+
+    send_lines = []
+    with open(file_path, 'r') as f:
+        for line in f.readlines():
+            if line.strip():
+                send_lines.append(line.strip())
+                print(line)
+
+    send_obj = {'text': tuple(send_lines), 'language': language}
+    translate_queue.put_task(send_obj)
+
+    print('Translating, please wait…')
+    while translate_queue.translated_lq_size() != len(send_lines):
+        time.sleep(0.1)
+
+    for tran_line in translate_queue.get_translated_lines():
+        print(tran_line)
 
 
 if __name__ == '__main__':
