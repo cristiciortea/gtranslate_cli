@@ -5,7 +5,8 @@ Google Translate is a fabulous tool, but we are hardcore hackers and resent the 
 - use this program in linuxOS or macOS
 - you need to have a GCP service account that has access to the Google TranslationAPI
 (for instructions to generate Gooogle Translate API credentials, please follow the short tutorial [here](https://codelabs.developers.google.com/codelabs/cloud-translation-python3#0)
-- I integrated a virtual environment .venv/ in the repo, the user can use it or can create his own with `python -m venv .venv`, run `source .venv/bin/activate` then run the installation of the requirements with `pip install -r requirements.txt'
+- I integrated a virtual environment .venv/ in the repo, the user can use it or can create his own with `python -m venv .venv`, run `source .venv/bin/activate` then run the installation of the requirements with `pip install -r requirements.txt`
+- Available languages are: Romanian (ro), Italian (it), German (de) and English (en)
 
 ### Setup:
 Step 1:
