@@ -1,13 +1,12 @@
 #! ../.venv/bin/python
 import argparse
-import subprocess
+import pathlib
 import sys
 import time
 
+import Pyro5.api
 import colorama
 from colorama import Fore, Style
-import pathlib
-import Pyro5.api
 
 import log
 
@@ -72,7 +71,7 @@ class CustomizedHelpFormatter(argparse.HelpFormatter):
 # Create the customized argument parser
 cli_parser = CustomizedArgumentParser(prog='gtranslate',
                                       usage='%(prog)s -f <filename> -l <lang>',
-                                      description='gtanslate 1.0: command line utility for translating text',
+                                      description='gtranslate 1.0: command line utility for translating text',
                                       formatter_class=CustomizedHelpFormatter,
                                       add_help=False)
 
@@ -87,7 +86,7 @@ arg_group.add_argument('-f',
                        dest='filename'
                        )
 arg_group.add_argument('-l',
-                       help='output language, can be one of "en", "it" or "de"',
+                       help='output language, can be one of "ro", "en", "it" or "de"',
                        required=True,
                        type=str,
                        metavar='<lang>:',

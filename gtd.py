@@ -1,18 +1,18 @@
 #! ../.venv/bin/python
 import logging
-import os
-import psutil
-from dotenv import load_dotenv
-import log
-import time
-import Pyro5.api
-import subprocess
 import multiprocessing
+import os
+import subprocess
+import time
 from multiprocessing import Queue
-from concurrent.futures import ProcessPoolExecutor
+
+import Pyro5.api
+import psutil
 import six
+from dotenv import load_dotenv
 from google.cloud import translate_v2 as translate
-from itertools import repeat
+
+import log
 
 # Logger setup
 LOGGER = log.setup_custom_logger('gtd')

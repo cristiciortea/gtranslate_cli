@@ -1,4 +1,3 @@
-import os
 import unicodedata
 from os import environ
 from dotenv import load_dotenv
@@ -44,12 +43,11 @@ def translate_text(target, text):
     import six
     from google.cloud import translate_v2 as translate
 
-    translate_client = translate.Client(credentials=credentials)
+    translate_client = translate.Client()
 
     if isinstance(text, six.binary_type):
         print('binary')
         text = text.decode("utf-8")
-    print(unicodedata.normalize('NFKD', text))
 
     # Text can also be a sequence of strings, in which case this method
     # will return a sequence of results for each text.
@@ -57,10 +55,7 @@ def translate_text(target, text):
 
     print(u"Text: {}".format(result["input"]))
     print(u"Translation: {}".format(result["translatedText"]))
-    print(u"Translation: {}".format(result["translatedText"].encode('utf-8')))
-    print(u"Translation: {}".format(result["translatedText"].encode('ascii', 'ignore').decode('utf-8')))
-    print(u"Translation: {}".format(result["translatedText"].encode('ascii', 'replace')))
     print(u"Detected source language: {}".format(result["detectedSourceLanguage"]))
 
 
-print(os.environ.get('ABC'))
+translate_text("ro", "good bye")
