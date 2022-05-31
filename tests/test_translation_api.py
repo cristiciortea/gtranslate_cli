@@ -1,3 +1,4 @@
+import os
 import unicodedata
 from os import environ
 from dotenv import load_dotenv
@@ -43,14 +44,6 @@ def translate_text(target, text):
     import six
     from google.cloud import translate_v2 as translate
 
-    # credentials = google.oauth2.credentials.Credentials(
-    #     'access_token',
-    #     refresh_token='refresh_token',
-    #     token_uri='https://oauth2.googleapis.com/token',
-    #     client_id='409062876654-loa7grareds74bm9l0lms9jnh3karctk.apps.googleusercontent.com',
-    #     client_secret='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')
-
-    credentials, project = google.auth.default()
     translate_client = translate.Client(credentials=credentials)
 
     if isinstance(text, six.binary_type):
@@ -70,4 +63,4 @@ def translate_text(target, text):
     print(u"Detected source language: {}".format(result["detectedSourceLanguage"]))
 
 
-translate_text("en", "A porets lakht tsvey mol. Eyn mol lakht er, ven men dartseylt\'em un a tsveytn mol, ven me darklert\'em, vorem farshteyn farshteyt er say-vi-say nit.\”")
+print(os.environ.get('ABC'))
