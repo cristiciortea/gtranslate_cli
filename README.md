@@ -18,3 +18,6 @@ Add path to credential .json file to the environment (.env file) or just export 
 GOOGLE_APPLICATION_CREDENTIALS=<path_to_your_service_account_key_json_file>  
 **or**  
 export GOOGLE_APPLICATION_CREDENTIALS=[PATH]
+
+![image](https://user-images.githubusercontent.com/74206863/171264753-ef0a8dbb-de37-43ed-a39e-7638ae38859d.png)
+
