@@ -21,3 +21,16 @@ export GOOGLE_APPLICATION_CREDENTIALS=[PATH]
 
 ![image](https://user-images.githubusercontent.com/74206863/171264753-ef0a8dbb-de37-43ed-a39e-7638ae38859d.png)
 
+---
+
+### Sample usage:  
+(localhost) $ QUERIES_PER_SEC=10 gtd  
+Translation daemon started, throttling at 10 queries/second.  
+
+(localhost) $ gtranslate -f tests/given_sample_text.txt -l en  
+Translating, please wait…  
+Good morning  
+Good evening  
+Good day  
+Goodbye  
+(localhost) $  
