@@ -1,10 +1,10 @@
-#! ../.venv/bin/python
 import logging
 import multiprocessing
 import os
 import subprocess
 import time
 from multiprocessing import Queue
+import multiprocessing.queues
 
 import Pyro5.api
 import psutil

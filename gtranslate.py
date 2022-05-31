@@ -1,4 +1,3 @@
-#! ../.venv/bin/python
 import argparse
 import pathlib
 import sys
@@ -10,7 +9,7 @@ from colorama import Fore, Style
 
 import log
 
-AVAILABLE_LANGUAGES = ["en", "it", "de"]
+AVAILABLE_LANGUAGES = ["ro", "en", "it", "de"]
 
 # Logger set up
 LOGGER = log.setup_custom_logger('root')
@@ -125,7 +124,6 @@ def main():
         for line in f.readlines():
             if line.strip():
                 send_lines.append(line.strip())
-                print(line)
 
     send_obj = {'text': tuple(send_lines), 'language': language}
     translate_queue.put_task(send_obj)
