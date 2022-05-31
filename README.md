@@ -24,7 +24,7 @@ export GOOGLE_APPLICATION_CREDENTIALS=[PATH]
 
 Step 3:
 - option one: type in the shell -> 1. `source .venv/bin/activate` -> the run: 2. `./gtd.py` (the daemon will start), then run the command 3. `./gtranslate.py -f <filename> -l <lang> `
-- option two: 
+- option two: use the commands -> to start the daemon 1. `sh gtd` -> 2. `sh gtranslate -f <file> -l <lang>`
 ---
 ### Additional notes regarding environment variables file (.env):
 - .env variables can be overwritten by the user
