@@ -30,7 +30,7 @@ Step 3:
 - .env variables can be overwritten by the user
 - QUERIES_PER_SEC represents max requests per second that the api is allowed to do
 - DAEMON_TIMEOUT_MINUTES is the timeout limit of the daemon. After it passed the value there (e.g. 30 minutes) the daemon will shut down.
-- DEBUG is the debug mode env variable -> 0 means we a
+- DEBUG is the debug mode env variable -> 0 means we are not on debug mode, 1 means debug mode
 ---
 ### Sample usage:  
 (localhost) $ QUERIES_PER_SEC=10 gtd  
