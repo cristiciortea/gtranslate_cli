@@ -36,6 +36,9 @@ if not int(os.getenv('DEBUG')):
 
 def start_pyro_server() -> None:
     """ Function that can be used to start a pyro server """
+    # killing the process on the port 9090 where the pyro server will start
+    subprocess.run('fuser -k 9090/tcp', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    # start the pyro server
     subprocess.run('.venv/bin/python3.9 -m Pyro5.nameserver', shell=True, stdout=subprocess.DEVNULL)
 
 
