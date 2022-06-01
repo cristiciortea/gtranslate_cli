@@ -1,4 +1,4 @@
-#!/home/kali/PycharmProjects/gtranslate/gtranslate_cli/.venv/bin/python3.9
+#!/home/kali/PycharmProjects/gtranslate_packed/gtranslate_cli/.venv/bin/python3.9
 # -*- coding: utf-8 -*-
 # Copyright 2022 Google LLC
 #

@@ -36,7 +36,7 @@ if not int(os.getenv('DEBUG')):
 
 def start_pyro_server() -> None:
     """ Function that can be used to start a pyro server """
-    subprocess.run('python -m Pyro5.nameserver', shell=True, stdout=subprocess.DEVNULL)
+    subprocess.run('.venv/bin/python3.9 -m Pyro5.nameserver', shell=True, stdout=subprocess.DEVNULL)
 
 
 def stop_processes(parent_pid) -> None:
