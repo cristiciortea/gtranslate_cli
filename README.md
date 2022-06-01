@@ -5,16 +5,21 @@ Google Translate is a fabulous tool, but we are hardcore hackers and resent the 
 - use this program in linuxOS or macOS
 - you need to have a GCP service account that has access to the Google TranslationAPI
 (for instructions to generate Gooogle Translate API credentials, please follow the short tutorial [here](https://codelabs.developers.google.com/codelabs/cloud-translation-python3#0)
-- I integrated a virtual environment .venv/ in the repo, the user can use it or can create his own with `python -m venv .venv`, run `source .venv/bin/activate` then run the installation of the requirements with `pip install -r requirements.txt`
 - Available languages are: Romanian (ro), Italian (it), German (de) and English (en)
 
 ### Setup:
 Step 1:
 Type
 `git clone https://github.com/cristiciortea/gtranslate_cli.git`
-in the shell  
+in the shell
 
 Step 2:
+- go to gtranslate_cli folder: `cd gtranslate_cli`
+- create virtual environment: `python3.9 -m venv .venv`
+- activate: `source .venv/bin/activate`
+- install requirements: `pip install -r requirements`
+
+Step 3:
 Add path to credential .json file to the environment (.env file) or just export it:
 
 GOOGLE_APPLICATION_CREDENTIALS=<path_to_your_service_account_key_json_file>  
@@ -23,7 +28,7 @@ export GOOGLE_APPLICATION_CREDENTIALS=[PATH]
 
 ![image](https://user-images.githubusercontent.com/74206863/171264753-ef0a8dbb-de37-43ed-a39e-7638ae38859d.png)  
 
-Step 3:
+Step 4:
 - option one: type in the shell -> 1. `source .venv/bin/activate` -> the run: 2. `./gtd.py` (the daemon will start), then run the command 3. `./gtranslate.py -f <filename> -l <lang> `
 - option two: use the commands -> to start the daemon 1. `sh gtd` -> 2. `sh gtranslate -f <file> -l <lang>`
 ---
