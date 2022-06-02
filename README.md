@@ -2,7 +2,7 @@
 Google Translate is a fabulous tool, but we are hardcore hackers and resent the browser. As such, we’d like to use the command line for doing string translation. At the same time, we are polyglots and know multiple languages (RO, IT, EN, DE). What we want is a CLI tool that can translate between Romanian, Italian, German and English. The tool will read input data from a file and output the translation to the console. The output language is specified as a flag on the command line.
 
 ### Notes:
-- use this program in linuxOS or macOS
+- use this program in linuxOS
 - you need to have a GCP service account that has access to the Google TranslationAPI
 (for instructions to generate Gooogle Translate API credentials, please follow the short tutorial [here](https://codelabs.developers.google.com/codelabs/cloud-translation-python3#0)
 - Available languages are: Romanian (ro), Italian (it), German (de) and English (en)
@@ -19,6 +19,23 @@ Step 2:
 - install wheel: `pip install dist/gtranslate_cc-1.0-py3-none-any.whl`
 
 Step 3:
+Use transcrypt to decrypt the `gtranslation-sa-key.json` if you have my key.
+```
+$ git clone https://github.com/elasticdog/transcrypt.git
+$ cd transcrypt/
+$ sudo ln -s ${PWD}/transcrypt /usr/local/bin/transcrypt
+$ cd ../gtranslate_cli/
+$ transcrypt
+```
+
+**or**  
+Add path to credential .json file to the environment (.env file) or just export it:
+  
+GOOGLE_APPLICATION_CREDENTIALS=<path_to_your_service_account_key_json_file>  
+**or**  
+export GOOGLE_APPLICATION_CREDENTIALS=[PATH]
+
+Step 4:
 - run command: `gtd &`
 - run command: `gtranslate -f <filename> -l <lang> `
 
