@@ -1,4 +1,3 @@
-#! .venv/bin/python3
 import logging
 import multiprocessing
 import os
