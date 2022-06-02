@@ -6,8 +6,24 @@ Google Translate is a fabulous tool, but we are hardcore hackers and resent the 
 - you need to have a GCP service account that has access to the Google TranslationAPI
 (for instructions to generate Gooogle Translate API credentials, please follow the short tutorial [here](https://codelabs.developers.google.com/codelabs/cloud-translation-python3#0)
 - Available languages are: Romanian (ro), Italian (it), German (de) and English (en)
+### Setup Option 1:
+Step 1:
+Type
+`git clone https://github.com/cristiciortea/gtranslate_cli.git`
+in the shell  
 
-### Setup:
+Step 2:
+- go to gtranslate_cli folder: `cd gtranslate_cli`
+- create virtual environment: `python3.9 -m venv .venv`
+- activate: `source .venv/bin/activate`
+- install wheel: `pip install dist/gtranslate_cc-1.0-py3-none-any.whl`
+
+Step 3:
+- run command: `gtd &`
+- run command: `gtranslate -f <filename> -l <lang> `
+
+---
+### Setup Option 2:
 Step 1:
 Type
 `git clone https://github.com/cristiciortea/gtranslate_cli.git`
