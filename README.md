@@ -4,7 +4,7 @@ Google Translate is a fabulous tool, but we are hardcore hackers and resent the 
 ### Notes:
 - use this cli tool in linuxOS
 - if you don't have my key to decrypt the api file credential, you need to have a GCP service account that has access to the Google TranslationAPI
-(for instructions to generate Gooogle Translate API credentials, please follow the short tutorial [here](https://codelabs.developers.google.com/codelabs/cloud-translation-python3#0)
+(for instructions to generate Gooogle Translate API credentials, please follow the short tutorial [here](https://codelabs.developers.google.com/codelabs/cloud-translation-python3#0))
 - Available languages are: Romanian (ro), Italian (it), German (de) and English (en)
 ### Setup Option 1:
 Step 1:
