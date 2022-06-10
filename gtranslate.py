@@ -116,7 +116,7 @@ def main():
     try:
         translate_queue.get_translated_lines()
     except Pyro5.errors.NamingError as e:
-        LOGGER.error('Pyro5.errors.NamingError: Daemon is not running... Please start the daemon.')
+        LOGGER.error('Pyro5.errors.NamingError: Daemon is not running... Please start the daemon (using the command: gtd). ')
         sys.exit(0)
 
     send_lines = []
